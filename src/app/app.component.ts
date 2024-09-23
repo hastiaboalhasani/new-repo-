@@ -2,36 +2,31 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
+  OnInit,
   QueryList,
   ViewChild,
   ViewChildren,
-  Directive,
 } from "@angular/core";
-import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
 import { COURSES } from "../db-data";
 import { Course } from "./model/course";
 import { CourseCardComponent } from "./course-card/course-card.component";
-import { HighlightedDirective } from "./directives/highlighted.directive"
-// import { log } from "console";
-
+import { HighlightedDirective } from "./directives/highlighted.directive";
+import { Observable } from "rxjs";
+import { HttpClient, HttpParams } from "@angular/common/http";
+import { CoursesService } from "./services/courses.service";
 
 @Component({
   selector: "app-root",
   templateUrl: "./app.component.html",
   styleUrls: ["./app.component.css"],
 })
-export class AppComponent implements AfterViewInit {
-  courses = COURSES;
+export class AppComponent implements OnInit {
+  courses$ : Observable<Course[]>;
+  constructor(private coursesService: CoursesService) {
 
-  @ViewChildren(CourseCardComponent, { read: ElementRef })
-  cards: QueryList<ElementRef>;
-
-  constructor() {}
-  onToggle(isHighlighted: boolean){
-    console.log(isHighlighted);
   }
-  ngAfterViewInit() {}
 
-  onCourseSelected(course: Course) {}
+  ngOnInit() {
+    this.courses$ = this.coursesService.loadCourses();
+  }
 }
